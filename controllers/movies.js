@@ -65,8 +65,8 @@ module.exports.deleteMovie = (req, res, next) => {
         throw new CurrentErr('Вы не можете удалить чужой фильм');
       }
 
-      movieSchema.findByIdAndDelete(req.params.movieId).select('-owner')
-        .then((deletedMovie) => res.status(200).send(deletedMovie));
+      return movieSchema.findByIdAndDelete(req.params.movieId).select('-owner');
     })
+    .then((deletedMovie) => res.status(200).send(deletedMovie))
     .catch(next);
 };

@@ -7,7 +7,6 @@ const {
 
 const {
   validationUpdateUser,
-  validationUpdateAvatar,
   validationUserId,
 } = require('../middlewares/validation');
 
