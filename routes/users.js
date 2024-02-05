@@ -7,10 +7,9 @@ const {
 
 const {
   validationUpdateUser,
-  validationUserId,
 } = require('../middlewares/validation');
 
-userRoutes.get('/me', validationUserId, getUserInfo);
+userRoutes.get('/me', getUserInfo);
 userRoutes.patch('/me', validationUpdateUser, updateUserInfo);
 
 module.exports = userRoutes;
