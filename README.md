@@ -1,5 +1,5 @@
 # movies-explorer-api
 
-IP 51.250.74.85
+IP 158.160.46.248
 
 Backend http://api.likobtseva.nomoredomainsmonster.ru
