@@ -14,6 +14,6 @@ const {
 
 movieRoutes.get('/', getAllSavedMovies);
 movieRoutes.post('/', validationCreateMovie, createMovie);
-movieRoutes.delete('/:_id', validationMovieById, deleteMovie);
+movieRoutes.delete('/:movieId', validationMovieById, deleteMovie);
 
 module.exports = movieRoutes;
