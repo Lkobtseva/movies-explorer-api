@@ -57,16 +57,23 @@ module.exports.createMovie = (req, res, next) => {
 };
 
 module.exports.deleteMovie = (req, res, next) => {
-  movieSchema.findById(req.params.movieId).select('+owner')
+  const userId = req.user._id;
+  const { movieId } = req.params;
+  movieSchema.findById(movieId)
     .then((movie) => {
       if (!movie) {
-        throw new NotFound('Пользователь не найден');
-      } else if (movie.owner.toString() !== req.user._id) {
-        throw new CurrentErr('Вы не можете удалить чужой фильм');
+        throw new NotFound(`Фильм с указанным id:${movieId} не найден`);
+      } else if (movie.owner.valueOf() === userId) {
+        movie.deleteOne()
+          .then(res.send({ message: 'Фильм удалён' }))
+          .catch((err) => next(err));
+      } else {
+        throw new CurrentErr('Вы не являетесь владельцем карточки с фильмом');
       }
-
-      return movieSchema.findByIdAndDelete(req.params.movieId).select('-owner');
     })
-    .then((deletedMovie) => res.status(200).send(deletedMovie))
-    .catch(next);
+    .catch((err) => {
+      if (err instanceof mongoose.Error.CastError) {
+        next(new BadRequest(`Передан некорректный id:${movieId}`));
+      } else { next(err); }
+    });
 };
