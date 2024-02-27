@@ -64,13 +64,12 @@ module.exports.deleteMovie = (req, res, next) => {
       if (!movie) {
         throw new NotFound(`Фильм с указанным id:${movieId} не найден`);
       } else if (movie.owner.valueOf() === userId) {
-        movie.deleteOne()
-          .then(res.send({ message: 'Фильм удалён' }))
-          .catch((err) => next(err));
+        return movie.deleteOne(); // Вернуть промис для последующей обработки
       } else {
         throw new CurrentErr('Вы не являетесь владельцем карточки с фильмом');
       }
     })
+    .then(() => res.status(200).send({ message: 'Фильм удалён' })) // Отправить ответ после удаления
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
         next(new BadRequest(`Передан некорректный id:${movieId}`));
