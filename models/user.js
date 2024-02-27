@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: {
       validator: (email) => validator.isEmail(email),
-      message: 'Неверный формат email', // когда validator вернёт false, будет использовано это сообщение
+      message: 'Неверный формат email',
     },
   },
   password: {
@@ -28,22 +28,24 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
+userSchema.statics.findUserByCredentials = function findOne(email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw new UnauthorisedError('Неправильные почта или пароль');
+        return Promise.reject(new UnauthorisedError('Неправильные почта или пароль'));
       }
+
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw new UnauthorisedError('Неправильные почта или пароль');
-          } return user;
+            return Promise.reject(new UnauthorisedError('Неправильные почта или пароль'));
+          }
+          return user; // теперь user доступен
         });
     });
 };
 
-userSchema.pre('save', async function(next) {
+/*userSchema.pre('save', async function(next) {
   const user = this;
   if (!user.isModified('password')) {
     return next();
@@ -51,6 +53,6 @@ userSchema.pre('save', async function(next) {
   const hashedPassword = await bcrypt.hash(user.password, 10);
   user.password = hashedPassword;
   next();
-});
+});*/
 
 module.exports = mongoose.model('user', userSchema);

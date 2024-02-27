@@ -25,7 +25,7 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
-app.use(requestLogger); // request
+app.use(requestLogger); 
 
 app.use(helmet());
 app.use(limiter);
